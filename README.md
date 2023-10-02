@@ -11,7 +11,7 @@ setup the backend server (virtual environment):
 3) run python3 <name_of_virtualenv>/bin/activate
 4) then put the server.py file inside <name_of_virtualenv>
 5) run 'pip3 install Flask CORS Werkzeug PyPDF2 docx openpyxl'
-6) while you are in virtual inviroment run "python3 server.py": this will set up the server at http://localhost:3000/
+6) while you are in virtual inviroment run "python3 server.py": this will set up the server at http://localhost:8080/
 
 NOW YOU ARE ALL SET TO GO
 
