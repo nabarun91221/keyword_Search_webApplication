@@ -81,8 +81,6 @@ def serverprocess():
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
     
-# doc to txt: https://blog.aspose.com/words/convert-docx-to-txt-in-python/ 
-# pdf to txt: https://pypi.org/project/PyPDF2/
 
   
     
