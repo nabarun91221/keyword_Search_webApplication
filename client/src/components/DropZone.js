@@ -4,13 +4,22 @@ import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
-const Dropzone = ({ className, files, setFiles, upload_process_files }) => {
+const Dropzone = ({
+  className,
+  files,
+  setFiles,
+  upload_process_files,
+  noty_handleClick,
+  setProcessData,
+}) => {
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles?.length) {
       setFiles((previousFiles) => [
         ...previousFiles,
         ...acceptedFiles.map((file) =>
-          Object.assign(file, { preview: URL.createObjectURL(file) })
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
         ),
       ]);
     }
@@ -25,11 +34,8 @@ const Dropzone = ({ className, files, setFiles, upload_process_files }) => {
 
   useEffect(() => {
     // Revoke the data uris to avoid memory leaks
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, [files]);
-  useEffect(() => {
     return () => {
-      console.log(files);
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
     };
   }, [files]);
 
@@ -43,20 +49,16 @@ const Dropzone = ({ className, files, setFiles, upload_process_files }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let formData = new FormData();
-    files.forEach((file) => {
-      formData.append(file.name, file);
-    });
-    // fetch("http://localhost:8080/api/serverprocess", {
-    //   method: "POST",
-    //   body: formData,
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   });
-    upload_process_files(formData);
-    removeAll();
+
+    if (files.length > 0) {
+      setProcessData([]);
+      let formData = new FormData();
+      files.forEach((file) => {
+        formData.append(file.name, file);
+      });
+      upload_process_files(formData);
+      removeAll();
+    }
   };
 
   return (
@@ -83,7 +85,12 @@ const Dropzone = ({ className, files, setFiles, upload_process_files }) => {
           <h2 className="title text-3xl font-semibold">Preview</h2>
           <button
             type="button"
-            onClick={removeAll}
+            onClick={() => {
+              removeAll();
+              if (files.length > 0) {
+                noty_handleClick("all files removed");
+              }
+            }}
             className="ml-auto mt-1 text-[12px] uppercase tracking-wider font-bold text-neutral-500 border border-purple-400 rounded-md px-3 hover:bg-purple-400 hover:text-white transition-colors"
           >
             Remove all files
@@ -101,20 +108,23 @@ const Dropzone = ({ className, files, setFiles, upload_process_files }) => {
                 key={file.name}
                 className="relative h-32 rounded-md shadow-lg"
               >
-                {/* <Image
-                src={file.preview}
-                alt={file.name}
-                width={100}
-                height={100}
-                onLoad={() => {
-                  URL.revokeObjectURL(file.preview);
-                }}
-                className="h-full w-full object-contain rounded-md"
-              /> */}
+                <Image
+                  src="/document.png"
+                  alt={file.name}
+                  width={100}
+                  height={100}
+                  onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                  }}
+                  className="h-full w-full object-contain rounded-md"
+                />
                 <button
                   type="button"
                   className="w-7 h-7 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 hover:bg-white transition-colors"
-                  onClick={() => removeFile(file.name)}
+                  onClick={() => {
+                    removeFile(file.name);
+                    noty_handleClick(`${file.name} removed`);
+                  }}
                 >
                   <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
                 </button>
@@ -128,7 +138,7 @@ const Dropzone = ({ className, files, setFiles, upload_process_files }) => {
       <input
         type="submit"
         value="PROCESS FILES"
-        className="w-full mb-5 mt-5 h-10 border border-secondary-400 bg-secondary-400 rounded flex justify-center items-center transition-colors"
+        className="w-full mb-5 mt-10 h-10 border border-secondary-400 bg-secondary-400 rounded flex justify-center items-center transition-colors"
       ></input>
     </form>
   );
