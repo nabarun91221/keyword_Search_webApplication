@@ -141,7 +141,7 @@ const Dropzone = ({
       </section>
       <input
         type="submit"
-        value="PROCESS FILES"
+        value="UPLOAD & PROCESS FILES"
         className="w-full mb-5 mt-20 h-10 border border-secondary-400 bg-secondary-400 rounded flex justify-center items-center transition-colors hover:bg-white hover:text-black"
       ></input>
     </form>
