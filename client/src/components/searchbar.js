@@ -88,32 +88,37 @@ export const Searchbar = ({
   };
 
   const onClickHandler = async () => {
-    setisLoading(true);
+    if (searchKey != "") {
+      setisLoading(true);
+      let resArr = [];
+      await processedData.forEach((data) => {
+        let sentenceArray = setSentenceArray(data);
+        // Filter our array by checking if each sentence includes the word, then immedietly returns it
+        let newSentenceArray = [];
+        (newSentenceArray = sentenceArray.filter((sentence) =>
+          sentence.toLowerCase().includes(searchKey.toLowerCase())
+        )),
+          newSentenceArray.forEach((item) => {
+            let result = {
+              filename: data.filename,
+              content: item,
+            };
+            resArr.push(result);
+          });
+      });
+      setTableData(() => {
+        return resArr;
+      });
 
-    let resArr = [];
-    await processedData.forEach((data) => {
-      let sentenceArray = setSentenceArray(data);
-      // Filter our array by checking if each sentence includes the word, then immedietly returns it
-      let newSentenceArray = [];
-      (newSentenceArray = sentenceArray.filter((sentence) =>
-        sentence.toLowerCase().includes(searchKey.toLowerCase())
-      )),
-        newSentenceArray.forEach((item) => {
-          let result = {
-            filename: data.filename,
-            content: item,
-          };
-          resArr.push(result);
-        });
-    });
-    setTableData(() => {
-      return resArr;
-    });
-
-    if (resArr.length == 0) {
-      noty_handleClick("No matching stremline found");
+      if (resArr.length == 0) {
+        noty_handleClick("No matching stremline found");
+      }
+      setisLoading(false);
+    } else if (searchKey == "" && processedData.length == 0) {
+      noty_handleClick("please upload a file & enter search string");
+    } else {
+      noty_handleClick("enter search string");
     }
-    setisLoading(false);
   };
 
   return (
