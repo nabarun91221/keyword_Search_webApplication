@@ -40,7 +40,7 @@ def docProcessing(path):
 # handleling xle
 def xlsProcessing(path):
     workbook = openpyxl.load_workbook(path)
-    worksheet = workbook['Sheet1']
+    worksheet = workbook.active
     extracted_text = []
     for row in worksheet.iter_rows(values_only=True):
         cellText = ""
@@ -48,7 +48,7 @@ def xlsProcessing(path):
             print(str(cell_value))
             cellText = cellText+" "+str(cell_value)
         extracted_text.append(cellText)
-    extracted_text = '. \n'.join(extracted_text)
+    extracted_text = '.\n'.join(extracted_text)
     # Close the workbook when done
     workbook.close()
     return extracted_text
