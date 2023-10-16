@@ -1,7 +1,6 @@
 import React from "react";
 import "./searchbar.css";
 import Image from "next/image";
-import { useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
@@ -65,6 +64,8 @@ export const Searchbar = ({
   paraToggle,
   setParatoggle,
   noty_handleClick,
+  setisLoading,
+  isLoading,
 }) => {
   const searchInputHandler = (e) => {
     setSearchKey(() => {
@@ -74,7 +75,7 @@ export const Searchbar = ({
 
   const setSentenceArray = (data) => {
     let sentenceArray = [];
-    if (paraToggle) {
+    if (paraToggle == true) {
       sentenceArray = data.content
         .replace(/([.?!])\s*(?=[A-Z])/g, "$1|")
         .split("|");
@@ -86,9 +87,11 @@ export const Searchbar = ({
     return sentenceArray;
   };
 
-  const onClickHandler = () => {
+  const onClickHandler = async () => {
+    setisLoading(true);
+
     let resArr = [];
-    processedData.forEach((data) => {
+    await processedData.forEach((data) => {
       let sentenceArray = setSentenceArray(data);
       // Filter our array by checking if each sentence includes the word, then immedietly returns it
       let newSentenceArray = [];
@@ -106,9 +109,11 @@ export const Searchbar = ({
     setTableData(() => {
       return resArr;
     });
+
     if (resArr.length == 0) {
       noty_handleClick("No matching stremline found");
     }
+    setisLoading(false);
   };
 
   return (
