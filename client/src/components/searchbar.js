@@ -80,7 +80,7 @@ export const Searchbar = ({
         .split("|");
     } else {
       sentenceArray = data.content
-        .replace(/([.?!])\s*(?=[A-Z])/g, "")
+        .replace(/([.?!])\s*(?=[A-Z])/g, "\n")
         .split("\n");
     }
     return sentenceArray;
