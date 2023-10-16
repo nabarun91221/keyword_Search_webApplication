@@ -28,3 +28,23 @@ body {
 .lower-container{
   width: 100%;
 }
+.spinner{
+  width: 100%;
+  height: 100%;
+    position: fixed;
+      background-color: rgba(255, 255, 255, 0.139);
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      z-index: 5;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(1.6px);
+      -webkit-backdrop-filter: blur(1.6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+}
