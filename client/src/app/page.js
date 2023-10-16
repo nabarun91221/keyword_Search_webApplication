@@ -8,16 +8,17 @@ import Stack from "@mui/material/Stack";
 import StickyHeadTable from "@/components/table";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { Loading } from "@/components/loading";
 export default function Home() {
   const [files, setFiles] = useState([]);
   const [processedData, setProcessData] = useState([]);
   const [searchKey, setSearchKey] = useState("");
   const [tableData, setTableData] = useState([]);
   const [paraToggle, setParatoggle] = useState(false);
-
+  const [isLoading, setisLoading] = useState(false);
   const upload_process_files = async (formData) => {
     try {
+      setisLoading(true);
       await fetch("http://localhost:8080/api/serverprocess", {
         method: "POST",
         body: formData,
@@ -55,12 +56,13 @@ export default function Home() {
       }, 2500);
     }
     setSearchKey("");
+    setisLoading(false);
   };
   //notify chip setup
   const noty_handleClick = (msg) => {
     toast(msg, {
       position: "bottom-left",
-      autoClose: 3000,
+      autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -82,7 +84,11 @@ export default function Home() {
       ></Dropzone>
       <div className="lower-container">
         <div className="container">
-          <Stack direction="row" spacing={1}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ flexDirection: { xs: "column", md: "row" } }}
+          >
             {processedData.length > 0 &&
               processedData.map((data, index) => {
                 return (
@@ -104,13 +110,15 @@ export default function Home() {
           paraToggle={paraToggle}
           setParatoggle={setParatoggle}
           noty_handleClick={noty_handleClick}
+          setisLoading={setisLoading}
+          isLoading={isLoading}
         ></Searchbar>
 
         <StickyHeadTable tableData={tableData}></StickyHeadTable>
       </div>
       <ToastContainer
         position="bottom-left"
-        autoClose={3000}
+        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -120,6 +128,7 @@ export default function Home() {
         pauseOnHover
         theme="dark"
       ></ToastContainer>
+      <Loading isLoading={isLoading}></Loading>
     </main>
   );
 }
