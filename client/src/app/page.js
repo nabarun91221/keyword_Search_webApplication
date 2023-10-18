@@ -13,11 +13,14 @@ export default function Home() {
   const [files, setFiles] = useState([]);
   const [processedData, setProcessData] = useState([]);
   const [searchKey, setSearchKey] = useState("");
+  const [searchKeyArr, setsearchKeyArr] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [paraToggle, setParatoggle] = useState(false);
   const [isLoading, setisLoading] = useState(false);
+
   const upload_process_files = async (formData) => {
     try {
+      setsearchKeyArr([]);
       setisLoading(true);
       await fetch("http://localhost:8080/api/serverprocess", {
         method: "POST",
@@ -72,6 +75,22 @@ export default function Home() {
     });
   };
 
+  // * this functuon could be used to delete search histry*
+
+  // const searchKeyChipDelete = (value) => {
+  //   let new_searchKeyArr = searchKeyArr;
+  //   const index = new_searchKeyArr.indexOf(value);
+  //   console.log(index);
+  //   if (index > -1) {
+  //     new_searchKeyArr.splice(index, 1);
+  //   }
+  //   console.log(new_searchKeyArr);
+  //   setsearchKeyArr(() => {
+  //     return new_searchKeyArr;
+  //   });
+  //   console.log(searchKeyArr);
+  // };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Dropzone
@@ -106,6 +125,8 @@ export default function Home() {
           processedData={processedData}
           searchKey={searchKey}
           setSearchKey={setSearchKey}
+          setsearchKeyArr={setsearchKeyArr}
+          searchKeyArr={searchKeyArr}
           setTableData={setTableData}
           paraToggle={paraToggle}
           setParatoggle={setParatoggle}
@@ -114,7 +135,14 @@ export default function Home() {
           isLoading={isLoading}
         ></Searchbar>
 
-        <StickyHeadTable tableData={tableData}></StickyHeadTable>
+        <StickyHeadTable
+          tableData={tableData}
+          isLoading={isLoading}
+          setisLoading={setisLoading}
+          searchKeyArr={searchKeyArr}
+          setSearchKeyArr={setsearchKeyArr}
+          // searchKeyChipDelete={searchKeyChipDelete}
+        ></StickyHeadTable>
       </div>
       <ToastContainer
         position="bottom-left"
