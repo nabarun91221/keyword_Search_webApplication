@@ -4,7 +4,6 @@ import Image from "next/image";
 import { styled } from "@mui/material/styles";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-
 //toggle switch using meterial ui
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -59,17 +58,17 @@ const IOSSwitch = styled((props) => (
 export const Searchbar = ({
   searchKey,
   setSearchKey,
+  setsearchKeyArr,
+  searchKeyArr,
   processedData,
   setTableData,
   paraToggle,
   setParatoggle,
   noty_handleClick,
-  setisLoading,
-  isLoading,
 }) => {
   const searchInputHandler = (e) => {
     setSearchKey(() => {
-      return e.target.value;
+      return e.target.value.toLowerCase().trim();
     });
   };
 
@@ -84,41 +83,67 @@ export const Searchbar = ({
         .replace(/([.?!])\s*(?=[A-Z])/g, "\n")
         .split("\n");
     }
+    // console.info(sentenceArray);
     return sentenceArray;
   };
 
   const onClickHandler = async () => {
-    if (searchKey != "") {
-      setisLoading(true);
+    if (
+      searchKey != "" &&
+      !searchKeyArr.includes(`${paraToggle ? `${searchKey} 🟢` : searchKey}`)
+    ) {
       let resArr = [];
+
       await processedData.forEach((data) => {
         let sentenceArray = setSentenceArray(data);
         // Filter our array by checking if each sentence includes the word, then immedietly returns it
         let newSentenceArray = [];
-        (newSentenceArray = sentenceArray.filter((sentence) =>
-          sentence.toLowerCase().includes(searchKey.toLowerCase())
-        )),
+        (newSentenceArray = sentenceArray.filter((sentence) => {
+          if (sentence.toLowerCase().split(" ").includes(searchKey)) {
+            return sentence;
+          }
+        })),
           newSentenceArray.forEach((item) => {
             let result = {
-              filename: data.filename,
+              searchKey: { searchKey },
+              filename: `${data.filename} ( ${
+                paraToggle ? `${searchKey} 🟢` : `${searchKey}`
+              } )`,
               content: item,
             };
             resArr.push(result);
           });
       });
-      setTableData(() => {
-        return resArr;
+      if (resArr.length > 0) {
+        if (paraToggle == true) {
+          setsearchKeyArr((pree) => {
+            return [...pree, `${searchKey} 🟢`];
+          });
+        } else {
+          setsearchKeyArr((pree) => {
+            return [...pree, searchKey];
+          });
+        }
+      }
+
+      setTableData((pre) => {
+        return [...pre, ...resArr];
       });
 
       if (resArr.length == 0) {
         noty_handleClick("No matching stremline found");
       }
-      setisLoading(false);
     } else if (searchKey == "" && processedData.length == 0) {
       noty_handleClick("please upload a file & enter search string");
+    } else if (
+      searchKeyArr.includes(searchKey) ||
+      searchKeyArr.includes(`${searchKey} 🟢`)
+    ) {
+      noty_handleClick("got it! search a new keyword");
     } else {
       noty_handleClick("enter search string");
     }
+    setSearchKey("");
   };
 
   return (
