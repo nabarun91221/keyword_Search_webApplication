@@ -53,6 +53,9 @@ def xlsProcessing(path):
     workbook.close()
     return extracted_text
 
+@app.route("/")
+def index():
+    return "<h1>Hello!</h1>"
 
 @app.route("/api/serverprocess", methods=['POST'])
 def serverprocess():
